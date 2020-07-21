@@ -112,7 +112,7 @@ void test1()
 	{
 		char buffer[256] = {0};
 		sink(mysprintf(buffer, 256, "%s", string::source()));
-		sink(buffer); // tainted [NOT DETECTED - implement UserDefinedFormattingFunction.getOutputParameterIndex()]
+		sink(buffer); // tainted
 	}
 
 	{
@@ -135,4 +135,25 @@ void test1()
 		sink(sscanf(string::source(), "%s", &buffer));
 		sink(buffer); // tainted [NOT DETECTED]
 	}
+}
+
+// ----------
+
+size_t strlen(const char *s);
+size_t wcslen(const wchar_t *s);
+
+void test2()
+{
+	char *s = string::source();
+	wchar_t *ws = wstring::source();
+	int i;
+
+	sink(strlen(s));
+	sink(wcslen(ws));
+
+	i = strlen(s) + 1;
+	sink(i);
+
+	sink(s[strlen(s) - 1]); // tainted
+	sink(ws + (wcslen(ws) / 2)); // tainted
 }
