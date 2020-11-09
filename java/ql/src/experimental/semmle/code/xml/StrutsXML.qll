@@ -23,7 +23,7 @@ class StrutsXMLElement extends XMLElement {
 }
 
 /**
- * A `<constant>` element in a `struts.xml` file.
+ * A `<constant>` element in a `StrutsXMLFile`.
  */
 class ConstantParameter extends StrutsXMLElement {
   ConstantParameter() { this.getName() = "constant" }

@@ -6,6 +6,6 @@
 <struts>
     <constant name="struts.enable.DynamicMethodInvocation" value="true" />
     <constant name="struts.devMode" value="true" />
-    <constant name="struts.i18n.encoding" value="utf-8"></constant>
+    <constant name="struts.i18n.encoding" value="utf-8" />
     <include file="login.xml" />
 </struts>
