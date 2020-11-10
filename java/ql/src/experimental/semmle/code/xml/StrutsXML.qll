@@ -1,7 +1,7 @@
 import java
 
 /**
- * A deployment descriptor file, typically called `structs.xml`.
+ * A deployment descriptor file, typically called `struts.xml`.
  */
 class StrutsXMLFile extends XMLFile {
   StrutsXMLFile() {
@@ -32,9 +32,4 @@ class ConstantParameter extends StrutsXMLElement {
    * Gets the value of the `name` attribute of this `<constant>`.
    */
   string getNameValue() { result = getAttributeValue("name") }
-
-  /**
-   * Gets the value of the `value` attribute of this `<constant>`.
-   */
-  string getValueValue() { result = getAttributeValue("value") }
 }
