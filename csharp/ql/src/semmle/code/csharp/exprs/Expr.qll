@@ -869,7 +869,7 @@ class NameOfExpr extends Expr, @nameof_expr {
  * }
  * ```
  */
-class  InterpolatedStringExpr extends Expr, @interpolated_string_expr {
+class InterpolatedStringExpr extends Expr, @interpolated_string_expr {
   override string toString() { result = "$\"...\"" }
 
   override string getAPrimaryQlClass() { result = "InterpolatedStringExpr" }
