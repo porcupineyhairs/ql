@@ -6,6 +6,7 @@
 
 private import python
 private import semmle.python.dataflow.new.DataFlow
+private import semmle.python.ApiGraphs
 private import semmle.python.Concepts
 private import semmle.python.dataflow.new.RemoteFlowSources
 private import semmle.python.dataflow.new.BarrierGuards
@@ -53,4 +54,22 @@ module PathInjection {
    * A comparison with a constant string, considered as a sanitizer-guard.
    */
   class StringConstCompareAsSanitizerGuard extends SanitizerGuard, StringConstCompare { }
+
+  /**
+   * An argument to Flask's `send_from_directory` call, considered as a flow sink.
+   */
+  class FlaskSendFromDirectorySink extends Sink {
+    FlaskSendFromDirectorySink() {
+      this = API::moduleImport("flask").getMember("send_from_directory").getACall().getArg(0)
+    }
+  }
+
+  /**
+   * An argument to Flask's `send_file` call, considered as a flow sink.
+   */
+  class FlaskSendFileSink extends Sink {
+    FlaskSendFileSink() {
+      this = API::moduleImport("flask").getMember("send_file").getACall().getArg(0)
+    }
+  }
 }
