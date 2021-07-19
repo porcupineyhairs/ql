@@ -18,23 +18,6 @@ module RequestForgery {
   abstract private class Sink extends DataFlow::ExprNode { }
 
   /**
-   * A data flow Barrier for server side request forgery vulnerabilities.
-   */
-  abstract private class Barrier extends DataFlow::ExprNode { }
-
-  /**
-   * A data flow node which does not allow taint to flow into it
-   * when analysing server side request forgery vulnerabilities.
-   */
-  abstract private class BarrierIn extends DataFlow::ExprNode { }
-
-  /**
-   * A data flow node which does not allow taint to flow outside it
-   * when analysing server side request forgery vulnerabilities.
-   */
-  abstract private class BarrierOut extends DataFlow::ExprNode { }
-
-  /**
    * A data flow BarrierGuard which blocks the flow of taint for
    * server side request forgery vulnerabilities.
    */
@@ -149,20 +132,31 @@ module RequestForgery {
    * This guard considers all checks as valid.
    */
   private class BaseUriGuard extends BarrierGuard, MethodCall {
-    BaseUriGuard() {
-      this.getTarget().getDeclaringType().hasQualifiedName("System.Uri", "IsBaseOf")
-    }
+    BaseUriGuard() { this.getTarget().hasQualifiedName("System.Uri", "IsBaseOf") }
 
     override predicate checks(Expr e, AbstractValue v) {
+      // we consider any checks against the tainted value to sainitize the taint.
+      // This implies any check such as shown below block the taint flow.
+      // Uri url = new Uri("whitelist.com")
+      // if (url.isBaseOf(`taint1))
       (e = this.getArgument(0) or e = this.getQualifier()) and
       v.(AbstractValues::BooleanValue).getValue() = true
     }
   }
 
+  /**
+   * A method call which checks if the Uri starts with a white-listed string is assumed
+   * to be a guard for Server Side Request Forgery(SSRF) Vulnerabilities.
+   * This guard considers all checks as valid.
+   */
   private class StringStartsWithBarrierGuard extends BarrierGuard, MethodCall {
     StringStartsWithBarrierGuard() { this.getTarget().hasQualifiedName("System.String.StartsWith") }
 
     override predicate checks(Expr e, AbstractValue v) {
+      // Any check such as the ones shown below
+      // "https://myurl.com/".startsWith(`taint`)
+      // `taint`.startsWith("https://myurl.com/")
+      // are assumed to sainitize the taint
       (e = this.getQualifier() or this.getArgument(0) = e) and
       v.(AbstractValues::BooleanValue).getValue() = true
     }
