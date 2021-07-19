@@ -39,6 +39,13 @@ module PathInjection {
   abstract class SanitizerGuard extends DataFlow::BarrierGuard { }
 
   /**
+   * An additional flow step for "path injection" vulnerabilities.
+   */
+  class AdditionalFlowStep extends Unit {
+    abstract predicate isAdditionalTaintStep(DataFlow::Node node1, DataFlow::Node node2);
+  }
+
+  /**
    * A source of remote user input, considered as a flow source.
    */
   class RemoteFlowSourceAsSource extends Source, RemoteFlowSource { }
@@ -70,6 +77,17 @@ module PathInjection {
   class FlaskSendFileSink extends Sink {
     FlaskSendFileSink() {
       this = API::moduleImport("flask").getMember("send_file").getACall().getArg(0)
+    }
+  }
+
+  private class DirnameFlow extends AdditionalFlowStep {
+    override predicate isAdditionalTaintStep(DataFlow::Node node1, DataFlow::Node node2) {
+      exists(DataFlow::CallCfgNode c |
+        c = API::moduleImport("os").getMember("path").getMember("dirname").getACall()
+      |
+        node1 = c.getArg(0) and
+        node2 = c
+      )
     }
   }
 }

@@ -31,6 +31,10 @@ class PathNotNormalizedConfiguration extends TaintTracking::Configuration {
   override predicate isSanitizerGuard(DataFlow::BarrierGuard guard) {
     guard instanceof SanitizerGuard
   }
+
+  override predicate isAdditionalTaintStep(DataFlow::Node node1, DataFlow::Node node2) {
+    exists(AdditionalFlowStep af | af.isAdditionalTaintStep(node1, node2))
+  }
 }
 
 /**
