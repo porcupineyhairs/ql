@@ -14,7 +14,6 @@ import experimental.semmle.code.java.frameworks.Thymeleaf
 module TemplateInjection {
   /** A taint tracking configuration to reason about Server Side Template Injection (SSTI) vulnerabilities */
   class TemplateInjectionFlowConfig extends TaintTracking::Configuration {
-    // import TemplateInjectionCustomizations::TemplateInjection;
     TemplateInjectionFlowConfig() { this = "TemplateInjectionFlowConfig" }
 
     override predicate isSource(DataFlow::Node source) { source instanceof Source }
@@ -34,7 +33,7 @@ module TemplateInjection {
    * A data flow source for `Configuration`.
    */
   private class Source extends DataFlow::Node {
-    Source() { this instanceof RemoteFlowSource or this instanceof LocalUserInput }
+    Source() { this instanceof RemoteFlowSource }
   }
 
   /**
@@ -114,9 +113,11 @@ module TemplateInjection {
     JinjavaRenderSink() {
       exists(MethodAccess ma |
         this.asExpr() = ma.getArgument(_) and
-        ma.getMethod() instanceof MethodJinjavaRenderForResult
-        or
-        ma.getMethod() instanceof MethodJinjavaRender
+        (
+          ma.getMethod() instanceof MethodJinjavaRenderForResult
+          or
+          ma.getMethod() instanceof MethodJinjavaRender
+        )
       )
     }
   }
@@ -137,11 +138,7 @@ module TemplateInjection {
     ThymeLeafgetResourceAsStreamSink() {
       exists(MethodAccess ma |
         this.asExpr() = ma.getArgument(0) and
-        ma.getMethod() instanceof MethodThymeleafGetResourceAsStream and
-        exists(ReturnStmt ret |
-          this.asExpr() = ret.getResult() and
-          ret.getEnclosingCallable() = ma.getMethod()
-        )
+        ma.getMethod() instanceof MethodThymeleafGetResourceAsStream
       )
     }
   }

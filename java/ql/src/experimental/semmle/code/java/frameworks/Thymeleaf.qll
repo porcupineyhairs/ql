@@ -25,7 +25,7 @@ class MethodThymeleafProcess extends Method {
 /** The `getResourceAsStream` method of Thymeleaf Templating Engine. */
 class MethodThymeleafGetResourceAsStream extends Method {
   MethodThymeleafGetResourceAsStream() {
-    getDeclaringType() instanceof TypeThymeleafIResourceResolver and
+    getDeclaringType().getASupertype*() instanceof TypeThymeleafIResourceResolver and
     hasName("getResourceAsStream")
   }
 }
