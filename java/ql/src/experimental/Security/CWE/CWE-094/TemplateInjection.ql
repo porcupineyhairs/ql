@@ -10,7 +10,7 @@
  */
 
 import java
-import TemplateInjection::TemplateInjection
+import TemplateInjection
 import semmle.code.java.dataflow.DataFlow
 
 from TemplateInjectionFlowConfig config, DataFlow::PathNode source, DataFlow::PathNode sink
